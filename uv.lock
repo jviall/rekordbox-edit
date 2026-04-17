@@ -972,7 +972,7 @@ wheels = [
 
 [[package]]
 name = "rekordbox-bulk-edit"
-version = "0.2.7"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },

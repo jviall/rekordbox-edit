@@ -15,7 +15,7 @@ repos:
     -   id: check-toml
     -   id: check-case-conflict
 -   repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.13.9
+    rev: v4.13.10
     hooks:
     -   id: commitizen
         stages: [commit-msg]
@@ -28,7 +28,7 @@ repos:
         files: pyproject\.toml$
         pass_filenames: false
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.9
+    rev: v0.15.11
     hooks:
     -   id: ruff-check
         args: [--fix]
