@@ -18,6 +18,18 @@ dependencies = [
     "platformdirs>=4.3.8,<5.0.0",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1,<9",
+    "commitizen>=4.8.3,<5",
+    "pre-commit>=4.2.0,<5",
+    "ruff>=0.12.8,<1",
+    "pytest-cov>=6.2.1,<7",
+    "pytest-mock>=3.14.1,<4",
+    "callee>=0.3.1,<1",
+    "ty>=0.0.1,<1",
+]
+
 [project.urls]
 Homepage = "https://github.com/jviall/rekordbox-bulk-edit"
 Repository = "https://github.com/jviall/rekordbox-bulk-edit"
@@ -39,19 +51,6 @@ output = ".coverage/coverage.json"
 [tool.coverage.lcov]
 output = ".coverage/coverage.lcov"
 
-
-[dependency-groups]
-dev = [
-    "pytest>=8.4.1,<9",
-    "commitizen>=4.8.3,<5",
-    "pre-commit>=4.2.0,<5",
-    "ruff>=0.12.8,<1",
-    "pytest-cov>=6.2.1,<7",
-    "pytest-mock>=3.14.1,<4",
-    "callee>=0.3.1,<1",
-    "ty>=0.0.1,<1",
-]
-
 [tool.ty.environment]
 python-version = "3.10"
 
@@ -62,7 +61,7 @@ allowed-unresolved-imports = ["pyrekordbox", "ffmpeg"]
 name = "cz_customize"
 tag_format = "v$version"
 version_scheme = "pep440"
-version_provider = "pep621"
+version_provider = "uv"
 update_changelog_on_bump = true
 major_version_zero = true
 
@@ -70,9 +69,9 @@ major_version_zero = true
 message_template = "{{change_type}}{{scope}}: {{message}}"
 example = "feat(convert): add new conversion feature"
 schema = "<type>(<scope>): <body>"
-schema_pattern = "^(BREAKING|feat|fix|perf|hotfix|refactor|ci|tests|docs|config)(\\([^)]*\\))?!?: .+"
+schema_pattern = "^(BREAKING|feat|fix|refactor|ci|test|docs|chore)(\\([^)]*\\))?!?: .+"
 bump_pattern = "^(BREAKING|feat|fix|perf|hotfix|refactor)"
-bump_map = { "BREAKING" = "MAJOR", "feat" = "MINOR", "fix" = "PATCH", "perf" = "PATCH", "hotfix" = "PATCH", "refactor" = "PATCH" }
+bump_map = { "BREAKING" = "MAJOR", "feat" = "MINOR", "fix" = "PATCH", "refactor" = "PATCH" }
 
 [[tool.commitizen.customize.questions]]
 type = "list"
@@ -81,13 +80,11 @@ choices = [
     {value = "BREAKING", name = "BREAKING: introduces breaking changes"},
     {value = "feat", name = "feat: introduces new features"},
     {value = "fix", name = "fix: patches a bug"},
-    {value = "perf", name = "perf: improves performance"},
-    {value = "hotfix", name = "hotfix: urgent fix"},
-    {value = "refactor", name = "refactor: code refactor"},
-    {value = "ci", name = "ci: CI/CD changes"},
-    {value = "tests", name = "test: adds or modifies tests"},
-    {value = "docs", name = "docs: documentation changes"},
-    {value = "config", name = "config: configuration changes"}
+    {value = "refactor", name = "refactor: code refactor with no functionality changes"},
+    {value = "ci", name = "ci: only CI/CD changes"},
+    {value = "test", name = "test: only adds or modifies tests"},
+    {value = "docs", name = "docs: only documentation changes"},
+    {value = "chore", name = "chore: some other non-code changes such as configs or dev dependency updates"}
 ]
 message = "Select the type of change you are committing"
 
