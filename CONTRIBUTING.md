@@ -1,6 +1,6 @@
 # Contributing to Rekordbox Bulk Edit
 
-Thanks for your interest in contributing to this project! I am by no means a python developer by nature, so I'm eager for more seasoned devs to weigh in, but one way or another, I hope you're here as a fellow DJ looking to make managing a RekordBox library easier :)
+Thanks for your interest in contributing to this project! Python is not my expertise, so I'm eager for those more seasoned than I to weigh in. One way or another, I hope you're here as a fellow DJ looking to make managing a RekordBox library easier :)
 
 ## Development Setup
 
@@ -11,7 +11,7 @@ Thanks for your interest in contributing to this project! I am by no means a pyt
 
 ### Installation
 
-1. **Install UV** (if not already installed):
+1. **Install UV**:
 
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -62,7 +62,7 @@ make test
 # Run tests with coverage
 make coverage
 
-# Run linting and auto-fix issues
+# Run linting and type-checking, will auto-fix issues
 make lint
 
 # Run formatting
@@ -72,32 +72,17 @@ make format
 make run-hooks
 ```
 
-### Managing Dependencies
-
-```bash
-# Add a new runtime dependency
-uv add package-name
-
-# Add a new development dependency
-uv add --group dev package-name
-
-# Update dependencies
-uv lock --upgrade
-
-# Show dependency tree
-uv tree
-```
-
-### Building and Publishing
-
-```bash
-# Build the package
-uv build
-
-# Publish to PyPI (requires authentication)
-uv publish
-```
-
 ## Commit Convention
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+This project uses and enforces [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). The allowable types of commits are:
+
+- `BREAKING`: introduces breaking changes (major bump)
+- `feat`: introduces new features (minor bump)
+- `fix`: patches a bug, upgrades a dependency (minor bump)
+
+- `refactor`: code refactor with no functionality changes (minor bump)
+
+- `ci`: only CI/CD changes
+- `test`: only adds or modifies tests
+- `docs`: only documentation changes
+- `chore`: some other non-code changes such as configs or dev-dependency updates

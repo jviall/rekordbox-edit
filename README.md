@@ -211,13 +211,17 @@ rbe search --artist "Daft Punk" --artist "Justice" --print ids \
 
    If you don't have a back up already it's a very worthwhile investment, even if you don't plan to use this tool! Find yourself a cheap external drive, you won't regret it.
 
-Limit the potential impact of a mistake by using filters to target a few tracks at a time e.g. `--artist "Crazy Frog" --limit 5` before targeting a larger set, and always run with `--dry-run` first.
+And generally limit the potential impact of a mistake by using filters to target a few tracks at a time e.g. `--artist "Crazy Frog" --limit 5` before targeting a larger set, and always run with `--dry-run` first.
 
 ## AI Usage
 
-I believe it's important to be aware of and to disclose AI usage.
+I believe it's important to be aware of and to disclose AI usage. AI usage seems to be forced upon us without us having much choice in the matter, and I like many others find this to be a gross and oppressive experience.
 
-I have nearly 10 years of professional experience as a Software Engineer. I do not wish to be replaced, and I don't believe that AI could (yet) replace me. That being said, Python is not my bread and butter, so generative AI has helped me fill those knowledge gaps, explore what is possible with this tool, and skip repetitive tasks. Also, time is scarce and I simply never would have gotten to build this out without leaning somewhat on AI. On the flip side, there's no way AI (today) could have built this without me (or some other experienced dev) and gotten the same quality. As is with all open-source code, you should inspect it for yourself and determine if it's up to snuff.
+I do also believe that it has its potential for good, and could be used for humanity's immense benefit if it weren't for capitalist greed.
+
+This isn't a soapbox, but I want to share my perspective and disclose the fact that I have used generative AI to help me build this tool. I could have built it without AI, but it's not usually my preference to spend my free time coding in front of a computer, and using it has drastically reduced the time it would have taken me to build this.
+
+I have nearly 10 years of professional experience as a Software Engineer, and while it will probably age poorly in the (hopefully far) future to say this, I don't think AI could have built this tool without me. You should of course validate the quality of this project yourself, as at the end of the day it's just code written by some stranger!
 
 If it's any consolation, my main test subject has been my own 10,000+ track RekordBox library--a risk I do not take lightly!
 
