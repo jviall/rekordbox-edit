@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rekordbox-edit"
-version = "0.3.0"
+version = "0.3.1"
 description = "Tools for managing and modifying a RekordBox library en-masse"
 authors = [{ name = "James Viall", email= "jamesviall@pm.me"}]
 license = "MIT"
