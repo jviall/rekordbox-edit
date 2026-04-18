@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 from pyrekordbox.db6 import DjmdContent
 
-from rekordbox_bulk_edit.utils import (
+from rekordbox_edit.utils import (
     PRINT_WIDTHS,
     PrintableField,
     UserQuit,
@@ -101,21 +101,21 @@ class TestTruncateField:
 
     def test_truncate_field_none_value(self):
         """Test truncate_field returns empty string for None value."""
-        from rekordbox_bulk_edit.utils import PrintableField, truncate_field
+        from rekordbox_edit.utils import PrintableField, truncate_field
 
         result = truncate_field(PrintableField.Title, None)
         assert result == ""
 
     def test_truncate_field_empty_string(self):
         """Test truncate_field with empty string."""
-        from rekordbox_bulk_edit.utils import PrintableField, truncate_field
+        from rekordbox_edit.utils import PrintableField, truncate_field
 
         result = truncate_field(PrintableField.Title, "")
         assert result == ""
 
     def test_truncate_field_short_value(self):
         """Test truncate_field returns value as-is when it fits."""
-        from rekordbox_bulk_edit.utils import PrintableField, truncate_field
+        from rekordbox_edit.utils import PrintableField, truncate_field
 
         short_title = "Short Title"
         result = truncate_field(PrintableField.Title, short_title)
@@ -123,7 +123,7 @@ class TestTruncateField:
 
     def test_truncate_field_exact_width(self):
         """Test truncate_field with value exactly at width limit."""
-        from rekordbox_bulk_edit.utils import (
+        from rekordbox_edit.utils import (
             PRINT_WIDTHS,
             PrintableField,
             truncate_field,
@@ -136,7 +136,7 @@ class TestTruncateField:
 
     def test_truncate_field_long_value(self):
         """Test truncate_field truncates long values with ellipsis."""
-        from rekordbox_bulk_edit.utils import PrintableField, truncate_field
+        from rekordbox_edit.utils import PrintableField, truncate_field
 
         long_title = "This is a very long title that exceeds the width limit"
         result = truncate_field(PrintableField.Title, long_title)
@@ -146,7 +146,7 @@ class TestTruncateField:
 
     def test_truncate_field_minimal_truncation(self):
         """Test truncate_field with value just over the limit."""
-        from rekordbox_bulk_edit.utils import (
+        from rekordbox_edit.utils import (
             PRINT_WIDTHS,
             PrintableField,
             truncate_field,
@@ -253,9 +253,9 @@ class TestGetAudioInfo:
 
     @pytest.fixture()
     def ffmpeg_exists(self, mocker):
-        mocker.patch("rekordbox_bulk_edit.utils.shutil", return_value=True)
+        mocker.patch("rekordbox_edit.utils.shutil", return_value=True)
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info_successful(self, mock_probe, ffmpeg_exists):
         """Test successful probe with complete audio information."""
         # Setup mock probe response
@@ -280,7 +280,7 @@ class TestGetAudioInfo:
         assert result["channels"] == 2
         assert result["bitrate"] == 2304  # Converted to kbps
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__with_bits_per_raw_sample(self, mock_probe, ffmpeg_exists):
         """When getting bit depth from bits_per_raw_sample."""
         # Setup mock probe response without bits_per_sample
@@ -303,7 +303,7 @@ class TestGetAudioInfo:
         assert result["bit_depth"] == 16
         assert result["bitrate"] == 1411
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__with_sample_fmt_parsing(self, mock_probe, ffmpeg_exists):
         """Test getting bit depth from sample_fmt."""
         # Setup mock probe response with sample_fmt
@@ -325,7 +325,7 @@ class TestGetAudioInfo:
         assert result["bit_depth"] == 32
         assert result["sample_rate"] == 96000
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__calculated_bitrate(self, mock_probe, ffmpeg_exists):
         """Test bitrate calculation when not provided."""
         # Setup mock probe response without bitrate
@@ -347,7 +347,7 @@ class TestGetAudioInfo:
         # Assert - calculated: 44100 * 16 * 2 / 1000 = 1411.2 -> 1411
         assert result["bitrate"] == 1411
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__no_audio_stream(self, mock_probe, ffmpeg_exists):
         """Test exception is raised when no audio stream exists."""
         # Setup mock probe response without audio stream
@@ -359,14 +359,14 @@ class TestGetAudioInfo:
         with pytest.raises(Exception, match="No audio stream"):
             get_audio_info("/path/to/video.mp4")
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path", return_value=False)
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path", return_value=False)
     def test_get_audio_info__checks_for_ffmpeg(self, mock_ffmpeg_in_path, mock_probe):
         """Test that we check for ffmpeg first."""
         with pytest.raises(Exception, match="FFmpeg is required"):
             get_audio_info("/nonexistent/file.flac")
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__with_zero_values(self, mock_probe, ffmpeg_exists):
         """Test handling of zero values in probe data."""
         # Setup mock probe response with zero bit depth
@@ -388,7 +388,7 @@ class TestGetAudioInfo:
         # Assert - should use sample_fmt parsing
         assert result["bit_depth"] == 24
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__unknown_bit_depth_returns_none(
         self, mock_probe, ffmpeg_exists
     ):
@@ -409,7 +409,7 @@ class TestGetAudioInfo:
         assert result["bit_depth"] is None
         assert result["bitrate"] == 1411  # still available from probe
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__unknown_bitrate_returns_none(
         self, mock_probe, ffmpeg_exists
     ):
@@ -431,7 +431,7 @@ class TestGetAudioInfo:
         assert result["bit_depth"] == 24
         assert result["bitrate"] is None
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg.probe")
+    @patch("rekordbox_edit.utils.ffmpeg.probe")
     def test_get_audio_info__mp3_bit_depth_is_none(self, mock_probe, ffmpeg_exists):
         """MP3 has no true bit depth; get_audio_info returns None and leaves it to the caller."""
         mock_probe.return_value = {
@@ -460,8 +460,8 @@ class TestConfirm:
     @pytest.fixture
     def mock_dependencies(self, mocker):
         """Mock all dependencies for confirm function."""
-        mock_click_prompt = mocker.patch("rekordbox_bulk_edit.utils.click.prompt")
-        mock_logger = mocker.patch("rekordbox_bulk_edit.utils.logger")
+        mock_click_prompt = mocker.patch("rekordbox_edit.utils.click.prompt")
+        mock_logger = mocker.patch("rekordbox_edit.utils.logger")
         return {
             "click_prompt": mock_click_prompt,
             "logger": mock_logger,
@@ -469,7 +469,7 @@ class TestConfirm:
 
     def test_confirm_yes(self, mock_dependencies):
         """Test confirm returns True when user enters 'y'."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "y"
 
@@ -480,7 +480,7 @@ class TestConfirm:
 
     def test_confirm_no(self, mock_dependencies):
         """Test confirm returns False when user enters 'n' with abort=False."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "n"
 
@@ -491,7 +491,7 @@ class TestConfirm:
 
     def test_confirm_quit(self, mock_dependencies):
         """Test confirm raises UserQuit when user enters 'q' with abort=False."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "q"
 
@@ -500,7 +500,7 @@ class TestConfirm:
 
     def test_confirm_no_abort_true(self, mock_dependencies):
         """Test confirm raises UserQuit when user enters 'n' with abort=True."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "n"
 
@@ -511,7 +511,7 @@ class TestConfirm:
 
     def test_confirm_no_binary_true(self, mock_dependencies):
         """Test confirm raises UserQuit when user enters 'n' with abort=True."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "n"
 
@@ -521,7 +521,7 @@ class TestConfirm:
 
     def test_confirm_case_insensitive_yes(self, mock_dependencies):
         """Test confirm handles case-insensitive 'YES' input."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "Y"
 
@@ -531,7 +531,7 @@ class TestConfirm:
 
     def test_confirm_case_insensitive_no(self, mock_dependencies):
         """Test confirm handles case-insensitive 'NO' input."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "N"
 
@@ -541,7 +541,7 @@ class TestConfirm:
 
     def test_confirm_case_insensitive_quit(self, mock_dependencies):
         """Test confirm handles case-insensitive 'QUIT' input."""
-        from rekordbox_bulk_edit.utils import confirm
+        from rekordbox_edit.utils import confirm
 
         mock_dependencies["click_prompt"].return_value = "Q"
 

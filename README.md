@@ -1,10 +1,10 @@
-# rekordbox-bulk-edit
+# rekordbox-edit
 
-[![Tests](https://img.shields.io/github/actions/workflow/status/jviall/rekordbox-bulk-edit/ci.yml?branch=main&logo=github&style=flat)](https://github.com/jviall/rekordbox-bulk-edit/blob/main/.github/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/jviall/rekordbox-bulk-edit/graph/badge.svg?token=ILZ1XHE61V)](https://codecov.io/gh/jviall/rekordbox-bulk-edit)
-[![Version](https://img.shields.io/pypi/v/rekordbox-bulk-edit?style=flat)](https://pypi.org/project/rekordbox-bulk-edit/)
-[![Platforms](https://img.shields.io/badge/platform-win%20%7C%20osx-blue?style=flat)](https://pypi.org/project/rekordbox-bulk-edit/)
-[![License](https://img.shields.io/pypi/l/rekordbox-bulk-edit?color=lightgrey)](https://github.com/jviall/rekordbox-bulk-edit/blob/main/LICENSE)
+[![Tests](https://img.shields.io/github/actions/workflow/status/jviall/rekordbox-edit/ci.yml?branch=main&logo=github&style=flat)](https://github.com/jviall/rekordbox-edit/blob/main/.github/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/jviall/rekordbox-edit/graph/badge.svg?token=ILZ1XHE61V)](https://codecov.io/gh/jviall/rekordbox-edit)
+[![Version](https://img.shields.io/pypi/v/rekordbox-edit?style=flat)](https://pypi.org/project/rekordbox-edit/)
+[![Platforms](https://img.shields.io/badge/platform-win%20%7C%20osx-blue?style=flat)](https://pypi.org/project/rekordbox-edit/)
+[![License](https://img.shields.io/pypi/l/rekordbox-edit?color=lightgrey)](https://github.com/jviall/rekordbox-edit/blob/main/LICENSE)
 
 A command-line tool for bulk operations on your Rekordbox library. Convert audio formats, search tracks, and update your database while preserving all your cues, analysis, and metadata.
 
@@ -16,7 +16,7 @@ A command-line tool for bulk operations on your Rekordbox library. Convert audio
 ## Installation
 
 ```bash
-pip install rekordbox-bulk-edit
+pip install rekordbox-edit
 ```
 
 **Requirements:**
@@ -29,7 +29,7 @@ pip install rekordbox-bulk-edit
 Search your library:
 
 ```bash
-rekordbox-bulk-edit search --artist "Daft Punk" --format flac
+rekordbox-edit search --artist "Daft Punk" --format flac
 rbe search --playlist "House Favorites"
 ```
 

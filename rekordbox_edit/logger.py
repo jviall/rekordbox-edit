@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Logging configuration for rekordbox-bulk-edit."""
+"""Logging configuration for rekordbox-edit."""
 
 import atexit
 import logging
@@ -10,12 +10,12 @@ from typing import Optional
 import click
 from platformdirs import PlatformDirs
 
-from rekordbox_bulk_edit._click import PrintChoice
+from rekordbox_edit._click import PrintChoice
 
 LOG_FILE_NAME = f"debug_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
 
 _APP_DIR = Path(
-    PlatformDirs(appname="rekordbox-bulk-edit", ensure_exists=True).user_data_dir
+    PlatformDirs(appname="rekordbox-edit", ensure_exists=True).user_data_dir
 )
 
 _console_handler: Optional["ConsoleLogHandler"] = None
@@ -62,7 +62,7 @@ def setup_logging(log_file: Optional[str] = None) -> None:
     """Configure the package logger with file and console handlers."""
     global _console_handler, _debug_file_path
 
-    pkg_logger = logging.getLogger("rekordbox_bulk_edit")
+    pkg_logger = logging.getLogger("rekordbox_edit")
     pkg_logger.setLevel(logging.DEBUG)
     pkg_logger.propagate = False
 
@@ -102,7 +102,7 @@ def setup_logging(log_file: Optional[str] = None) -> None:
 
 
 def _flush_handlers() -> None:
-    for handler in logging.getLogger("rekordbox_bulk_edit").handlers:
+    for handler in logging.getLogger("rekordbox_edit").handlers:
         handler.flush()
 
 

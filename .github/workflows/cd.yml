@@ -78,6 +78,6 @@ jobs:
           body: |
             🚧 Development pre-release
 
-            Install: `pip install --pre rekordbox-bulk-edit==${{ steps.version.outputs.version }}`
+            Install: `pip install --pre rekordbox-edit==${{ steps.version.outputs.version }}`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

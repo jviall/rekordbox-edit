@@ -26,7 +26,7 @@ jobs:
             code:
               - '.github/actions/**'
               - '.github/workflows/**'
-              - 'rekordbox_bulk_edit/**'
+              - 'rekordbox_edit/**'
               - 'tests/**'
               - 'pyproject.toml'
               - 'uv.lock'

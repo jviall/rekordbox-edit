@@ -1,4 +1,4 @@
-"""Search command for rekordbox-bulk-edit."""
+"""Search command for rekordbox-edit."""
 
 import logging
 import sys
@@ -7,16 +7,16 @@ from typing import List
 import click
 from pyrekordbox import Rekordbox6Database
 
-from rekordbox_bulk_edit._click import (
+from rekordbox_edit._click import (
     PrintChoice,
     add_click_options,
     global_click_filters,
     print_option,
     track_ids_argument,
 )
-from rekordbox_bulk_edit.logger import get_debug_file_path, set_level
-from rekordbox_bulk_edit.query import get_filtered_content
-from rekordbox_bulk_edit.utils import (
+from rekordbox_edit.logger import get_debug_file_path, set_level
+from rekordbox_edit.query import get_filtered_content
+from rekordbox_edit.utils import (
     print_track_info,
 )
 

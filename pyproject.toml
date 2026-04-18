@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "rekordbox-bulk-edit"
+name = "rekordbox-edit"
 version = "0.3.0"
 description = "Tools for managing and modifying a RekordBox library en-masse"
 authors = [{ name = "James Viall", email= "jamesviall@pm.me"}]
@@ -31,13 +31,13 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/jviall/rekordbox-bulk-edit"
-Repository = "https://github.com/jviall/rekordbox-bulk-edit"
-Issues = "https://github.com/jviall/rekordbox-bulk-edit/issues"
+Homepage = "https://github.com/jviall/rekordbox-edit"
+Repository = "https://github.com/jviall/rekordbox-edit"
+Issues = "https://github.com/jviall/rekordbox-edit/issues"
 
 [project.scripts]
-rekordbox-bulk-edit = "rekordbox_bulk_edit.cli:main"
-rbe = "rekordbox_bulk_edit.cli:main"
+rekordbox-edit = "rekordbox_edit.cli:main"
+rbe = "rekordbox_edit.cli:main"
 
 [tool.coverage.run]
 branch = true

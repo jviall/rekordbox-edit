@@ -971,7 +971,7 @@ wheels = [
 ]
 
 [[package]]
-name = "rekordbox-bulk-edit"
+name = "rekordbox-edit"
 version = "0.3.0"
 source = { editable = "." }
 dependencies = [

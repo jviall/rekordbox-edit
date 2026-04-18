@@ -4,7 +4,7 @@
 import pytest
 from unittest.mock import MagicMock
 
-from rekordbox_bulk_edit.query import CollectionQuery, get_filtered_content
+from rekordbox_edit.query import CollectionQuery, get_filtered_content
 
 
 class TestCollectionQuery:
@@ -249,7 +249,7 @@ class TestCollectionQuery:
         adds a condition on the DjmdContent.FileType field."""
         # Mock the get_file_type_for_format function
         mock_get_file_type = mocker.patch(
-            "rekordbox_bulk_edit.utils.get_file_type_for_format"
+            "rekordbox_edit.utils.get_file_type_for_format"
         )
         mock_get_file_type.return_value = 5  # Example file type code
 
@@ -357,7 +357,7 @@ class TestCollectionQuery:
 
     def test_by_format_empty_string(self, mocker):
         """Empty format string logs a warning and returns self unchanged."""
-        mock_warn = mocker.patch("rekordbox_bulk_edit.query.logger")
+        mock_warn = mocker.patch("rekordbox_edit.query.logger")
         query = CollectionQuery()
         result = query.by_format("")
 
@@ -368,10 +368,10 @@ class TestCollectionQuery:
     def test_by_format_invalid(self, mocker):
         """Invalid format logs a warning and returns a copy without adding a condition."""
         mocker.patch(
-            "rekordbox_bulk_edit.utils.get_file_type_for_format",
+            "rekordbox_edit.utils.get_file_type_for_format",
             side_effect=ValueError("unknown format"),
         )
-        mock_warn = mocker.patch("rekordbox_bulk_edit.query.logger")
+        mock_warn = mocker.patch("rekordbox_edit.query.logger")
         query = CollectionQuery()
         new_query = query.by_format("xyz")
 
@@ -429,7 +429,7 @@ def mock_query(mocker):
         "match_any",
     ]:
         getattr(instance, method).return_value = instance
-    mocker.patch("rekordbox_bulk_edit.query.CollectionQuery", return_value=instance)
+    mocker.patch("rekordbox_edit.query.CollectionQuery", return_value=instance)
     return instance
 
 

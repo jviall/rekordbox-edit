@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 from platformdirs import PlatformDirs
 
-import rekordbox_bulk_edit.logger as rbe_logger
-from rekordbox_bulk_edit._click import PrintChoice
-from rekordbox_bulk_edit.logger import get_debug_file_path, set_level, setup_logging
+import rekordbox_edit.logger as rbe_logger
+from rekordbox_edit._click import PrintChoice
+from rekordbox_edit.logger import get_debug_file_path, set_level, setup_logging
 
 
 @pytest.fixture(autouse=True)
@@ -29,7 +29,7 @@ def custom_log_file(tmp_path):
 class TestSetupLogging:
     def test_creates_log_file_in_default_path(self):
         """setup_logging() creates a log file in the default platform data dir."""
-        expected_dir = Path(PlatformDirs("rekordbox-bulk-edit").user_data_dir)
+        expected_dir = Path(PlatformDirs("rekordbox-edit").user_data_dir)
         assert get_debug_file_path().parent == expected_dir
 
     def test_creates_log_file_at_given_path(self, custom_log_file):
@@ -38,7 +38,7 @@ class TestSetupLogging:
 
     def test_file_handler_captures_all_levels(self, custom_log_file):
         """File handler records DEBUG, INFO, WARNING, ERROR, and CRITICAL messages."""
-        pkg_logger = logging.getLogger("rekordbox_bulk_edit")
+        pkg_logger = logging.getLogger("rekordbox_edit")
         pkg_logger.debug("debug msg")
         pkg_logger.info("info msg")
         pkg_logger.warning("warning msg")
@@ -58,15 +58,15 @@ class TestSetupLogging:
         """setup_logging() is idempotent — calling it again replaces handlers."""
         setup_logging(log_file=str(tmp_path / "first.log"))
         setup_logging(log_file=str(tmp_path / "second.log"))
-        pkg_logger = logging.getLogger("rekordbox_bulk_edit")
+        pkg_logger = logging.getLogger("rekordbox_edit")
         # Should have exactly 2 handlers (file + console), not 4
         assert len(pkg_logger.handlers) == 2
 
     def test_module_loggers_propagate_to_package_logger(self, custom_log_file):
         """Loggers from child modules propagate to the package logger's file handler."""
-        child_logger = logging.getLogger("rekordbox_bulk_edit.commands.search")
+        child_logger = logging.getLogger("rekordbox_edit.commands.search")
         child_logger.info("from child")
-        for handler in logging.getLogger("rekordbox_bulk_edit").handlers:
+        for handler in logging.getLogger("rekordbox_edit").handlers:
             handler.flush()
 
         content = custom_log_file.read_text(encoding="utf-8")
@@ -109,8 +109,8 @@ class TestSetLevel:
         setup_logging(log_file=str(tmp_path / "test.log"))
         set_level(PrintChoice.IDS)
 
-        logging.getLogger("rekordbox_bulk_edit.query").info("should be suppressed")
-        logging.getLogger("rekordbox_bulk_edit.utils").info("also suppressed")
+        logging.getLogger("rekordbox_edit.query").info("should be suppressed")
+        logging.getLogger("rekordbox_edit.utils").info("also suppressed")
 
         captured = capsys.readouterr()
         assert "should be suppressed" not in captured.out

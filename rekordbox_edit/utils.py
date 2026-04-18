@@ -1,4 +1,4 @@
-"""Shared utility functions for rekordbox-bulk-edit."""
+"""Shared utility functions for rekordbox-edit."""
 
 import logging
 import platform
@@ -188,13 +188,13 @@ def get_ffmpeg_directions():
     """Get helpful error message for missing ffmpeg"""
     if platform.system() == "Windows":  # Windows
         return """
-FFmpeg is required for rekordbox-bulk-edit.
+FFmpeg is required for rekordbox-edit.
 Please install FFmpeg:
 https://ffmpeg.org/download.html
 """
     else:  # macOS
         return """
-FFmpeg is required for rekordbox-bulk-edit.
+FFmpeg is required for rekordbox-edit.
 Please install FFmpeg:
 brew install ffmpeg
 or https://ffmpeg.org/download.html
