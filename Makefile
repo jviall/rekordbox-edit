@@ -4,7 +4,7 @@ test:
 	uv run pytest tests
 
 coverage:
-	uv run pytest tests --cov=rekordbox_bulk_edit --junitxml=.coverage/junit.xml --cov-report=term-missing --cov-report=html --cov-report=xml
+	uv run pytest tests --cov=rekordbox_edit --junitxml=.coverage/junit.xml --cov-report=term-missing --cov-report=html --cov-report=xml
 
 lint:
 	uv run ruff check --fix

@@ -7,7 +7,7 @@ import ffmpeg
 import pytest
 from callee import Regex, String
 
-from rekordbox_bulk_edit.commands.convert import (
+from rekordbox_edit.commands.convert import (
     cleanup_converted_files,
     convert_command,
     convert_to_lossless,
@@ -16,22 +16,22 @@ from rekordbox_bulk_edit.commands.convert import (
     rollback_and_cleanup,
     update_database_record,
 )
-from rekordbox_bulk_edit.utils import OutputFormats, UserQuit
+from rekordbox_edit.utils import OutputFormats, UserQuit
 
 
 @pytest.fixture(autouse=True)
 def mock_logger():
     """Mock the logger for all tests in this module."""
-    with patch("rekordbox_bulk_edit.commands.convert.logger") as mock_log:
+    with patch("rekordbox_edit.commands.convert.logger") as mock_log:
         yield mock_log
 
 
 class TestConvertToLossless:
     """Test convert_to_lossless function."""
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_aiff_16bit(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -57,9 +57,9 @@ class TestConvertToLossless:
             "output.aiff", acodec="pcm_s16be", map_metadata=0, write_id3v2=1
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_wav_24bit(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -83,9 +83,9 @@ class TestConvertToLossless:
             "output.wav", acodec="pcm_s24le", map_metadata=0, write_id3v2=1
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_flac(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -109,9 +109,9 @@ class TestConvertToLossless:
             "output.flac", acodec="flac", map_metadata=0, write_id3v2=1
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_unsupported_format(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -128,9 +128,9 @@ class TestConvertToLossless:
         with pytest.raises(Exception, match="Unsupported lossless format"):
             convert_to_lossless("input.flac", "output.xyz", fake_format)
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_ffmpeg_error(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -154,7 +154,7 @@ class TestConvertToLossless:
         # Assert
         assert result is False
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_convert_to_lossless_ffmpeg_not_found(self, mock_ffmpeg_in_path):
         """Raises exception when FFmpeg is not in PATH."""
         mock_ffmpeg_in_path.return_value = False
@@ -162,9 +162,9 @@ class TestConvertToLossless:
         with pytest.raises(Exception, match="FFmpeg not found in PATH"):
             convert_to_lossless("input.flac", "output.aiff", OutputFormats.AIFF)
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_lossless_unknown_bit_depth_falls_back(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -186,9 +186,9 @@ class TestConvertToLossless:
             "output.aiff", acodec="pcm_s16be", map_metadata=0, write_id3v2=1
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_lossless_ffmpeg_error_no_stderr(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -208,9 +208,9 @@ class TestConvertToLossless:
 
         assert result is False
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_lossless_unexpected_exception_reraises(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -231,9 +231,9 @@ class TestConvertToLossless:
 class TestConvertToMp3:
     """Test convert_to_mp3 function."""
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_mp3_success(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -261,9 +261,9 @@ class TestConvertToMp3:
             write_id3v2=1,
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_mp3_ffmpeg_error(
         self, mock_ffmpeg, mock_ffmpeg_in_path, mock_get_audio_info
     ):
@@ -285,7 +285,7 @@ class TestConvertToMp3:
         # Assert
         assert result is False
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_convert_to_mp3_ffmpeg_not_found(self, mock_ffmpeg_in_path):
         """Raises exception when FFmpeg is not in PATH."""
         mock_ffmpeg_in_path.return_value = False
@@ -293,8 +293,8 @@ class TestConvertToMp3:
         with pytest.raises(Exception, match="FFmpeg not found in PATH"):
             convert_to_mp3("input.flac", "output.mp3")
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_mp3_ffmpeg_error_no_stderr(
         self, mock_ffmpeg, mock_ffmpeg_in_path
     ):
@@ -313,8 +313,8 @@ class TestConvertToMp3:
 
         assert result is False
 
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.ffmpeg")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.ffmpeg")
     def test_convert_to_mp3_unexpected_exception_reraises(
         self, mock_ffmpeg, mock_ffmpeg_in_path
     ):
@@ -334,7 +334,7 @@ class TestConvertToMp3:
 class TestUpdateDatabaseRecord:
     """Test update_database_record function."""
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
     @patch("os.path.join")
     def test_update_database_record_flac(
         self, mock_join, mock_get_audio_info, make_djmd_content_item
@@ -357,7 +357,7 @@ class TestUpdateDatabaseRecord:
         assert mock_content.FileType == 5  # FLAC file type
         assert mock_content.BitRate == 0  # FLAC bitrate set to 0
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
     @patch("os.path.join")
     def test_update_database_record_mp3(
         self, mock_join, mock_get_audio_info, make_djmd_content_item
@@ -390,7 +390,7 @@ class TestUpdateDatabaseRecord:
         with pytest.raises(Exception, match="Content record with ID 123 not found"):
             update_database_record(mock_db, 123, "output.flac", "/path/to", "FLAC")
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
     @patch("os.path.join")
     def test_update_database_record_bit_depth_mismatch(
         self, mock_join, mock_get_audio_info, make_djmd_content_item
@@ -408,7 +408,7 @@ class TestUpdateDatabaseRecord:
         with pytest.raises(Exception, match="Bit depth mismatch"):
             update_database_record(mock_db, 123, "output.aiff", "/path/to", "AIFF")
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
     @patch("os.path.join")
     def test_update_database_record_mp3_none_bitrate_uses_320(
         self, mock_join, mock_get_audio_info, make_djmd_content_item
@@ -425,8 +425,8 @@ class TestUpdateDatabaseRecord:
 
         assert mock_content.BitRate == 320
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_file_type_for_format")
-    @patch("rekordbox_bulk_edit.commands.convert.get_audio_info")
+    @patch("rekordbox_edit.commands.convert.get_file_type_for_format")
+    @patch("rekordbox_edit.commands.convert.get_audio_info")
     @patch("os.path.join")
     def test_update_database_record_unsupported_format_raises(
         self, mock_join, mock_get_audio_info, mock_get_file_type, make_djmd_content_item
@@ -493,20 +493,20 @@ class TestRollbackAndCleanup:
         db.session = None
         rollback_and_cleanup(db, [])  # should not raise
 
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
     def test_cleans_up_converted_files(self, mock_cleanup, mock_db):
         """Calls cleanup_converted_files when converted_files is non-empty."""
         converted_files = [{"output_path": "/path/file.aiff"}]
         rollback_and_cleanup(mock_db, converted_files)
         mock_cleanup.assert_called_once_with(converted_files)
 
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
     def test_skips_cleanup_when_no_converted_files(self, mock_cleanup, mock_db):
         """Does not call cleanup_converted_files when converted_files is empty."""
         rollback_and_cleanup(mock_db, [])
         mock_cleanup.assert_not_called()
 
-    @patch("rekordbox_bulk_edit.commands.convert.logger")
+    @patch("rekordbox_edit.commands.convert.logger")
     def test_rollback_exception_logs_critical_and_reraises(self, mock_logger, mock_db):
         """When rollback raises, logs critical messages and re-raises the exception."""
         error = Exception("DB connection lost")
@@ -551,14 +551,14 @@ class TestGetOutputPath:
 class TestConvertCommand:
     """Test convert_command function comprehensively."""
 
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     @patch("os.path.dirname")
     def test_convert_command_success_with_yes_flag(
@@ -630,11 +630,11 @@ class TestConvertCommand:
         mock_update_db.assert_called_once()
         mock_convert.assert_called_once()
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_dry_run_shows_files_to_convert(
         self,
@@ -674,10 +674,10 @@ class TestConvertCommand:
         mock_print_track_info.assert_called_once_with([mock_content])
         mock_db.session.commit.assert_not_called()
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_filters_passed_to_get_filtered_content(
         self,
         mock_ffmpeg_in_path,
@@ -709,8 +709,8 @@ class TestConvertCommand:
         assert call_kwargs["formats"] == ("flac",)
         assert call_kwargs["match_all"] is True
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.confirm")
     def test_convert_command_rekordbox_running_prompts(
         self,
         mock_confirm,
@@ -729,8 +729,8 @@ class TestConvertCommand:
         assert result.exit_code == 0
         mock_confirm.assert_called_once()
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_convert_command_ffmpeg_not_available_error(
         self,
         mock_ffmpeg_in_path,
@@ -747,11 +747,11 @@ class TestConvertCommand:
 
         assert result.exit_code == 1
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_filters_out_lossy_formats(
         self,
@@ -806,11 +806,11 @@ class TestConvertCommand:
         assert result.exit_code == 0
         mock_print_track_info.assert_called_once_with([mock_flac_content])
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
     def test_convert_command_no_files_to_convert(
         self,
         mock_print_track_info,
@@ -839,11 +839,11 @@ class TestConvertCommand:
         assert result.exit_code == 0
         mock_print_track_info.assert_not_called()
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_conflict_detection_without_overwrite(
         self,
@@ -890,11 +890,11 @@ class TestConvertCommand:
             & Regex(".*Skipping 1 files \\(output exists, use --overwrite\\).*")
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_conflict_with_overwrite(
         self,
@@ -941,14 +941,14 @@ class TestConvertCommand:
         mock_print_track_info.assert_called_once()
 
     @patch("os.remove")
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     def test_convert_command_delete_flag_removes_originals(
         self,
@@ -1029,11 +1029,11 @@ class TestConvertCommand:
             "--print=ids or --print=silent requires --dry-run or --yes" in result.output
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_print_ids_with_dry_run(
         self,
@@ -1069,11 +1069,11 @@ class TestConvertCommand:
         assert result.exit_code == 0
         assert "AAA111 BBB222" in result.output
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_print_silent_with_dry_run(
         self,
@@ -1109,7 +1109,7 @@ class TestConvertCommand:
         # Should have no output (no IDs, no track info)
         assert result.output.strip() == ""
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
     def test_convert_rekordbox_running_scripting_mode_errors(
         self,
         mock_get_rb_pid,
@@ -1129,11 +1129,11 @@ class TestConvertCommand:
             & Regex(".*Rekordbox is running.*Cannot proceed in scripting mode.*")
         )
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_conflicts_silent_with_yes(
         self,
@@ -1178,13 +1178,13 @@ class TestConvertCommand:
             assert "output exists" not in str(call)
 
     @patch("os.remove")
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     def test_convert_delete_default_lossless(
         self,
@@ -1240,13 +1240,13 @@ class TestConvertCommand:
         mock_remove.assert_called_once_with("/music/folder/song.flac")
 
     @patch("os.remove")
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_mp3")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_mp3")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     def test_convert_delete_default_mp3(
         self,
@@ -1302,13 +1302,13 @@ class TestConvertCommand:
         mock_remove.assert_not_called()
 
     @patch("os.remove")
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     def test_convert_keep_flag_overrides_lossless_default(
         self,
@@ -1364,13 +1364,13 @@ class TestConvertCommand:
         mock_remove.assert_not_called()
 
     @patch("os.remove")
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_mp3")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_mp3")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     def test_convert_delete_flag_overrides_mp3_default(
         self,
@@ -1427,13 +1427,13 @@ class TestConvertCommand:
         assert result.exit_code == 0
         mock_remove.assert_called_once_with("/music/folder/song.flac")
 
-    @patch("rekordbox_bulk_edit.commands.convert.cleanup_converted_files")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.cleanup_converted_files")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
     @patch("os.path.exists")
     @patch("os.remove")
     def test_convert_print_ids_with_yes_outputs_converted_ids(
@@ -1491,9 +1491,9 @@ class TestConvertCommand:
 class TestConvertCommandErrorPaths:
     """Tests for convert_command error handling and edge case branches."""
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_convert_command_no_db_session_exits(
         self,
         mock_ffmpeg_in_path,
@@ -1513,8 +1513,8 @@ class TestConvertCommandErrorPaths:
 
         assert result.exit_code != 0
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.confirm")
     def test_convert_command_rekordbox_running_user_quits(
         self,
         mock_confirm,
@@ -1530,11 +1530,11 @@ class TestConvertCommandErrorPaths:
 
         assert result.exit_code == 0
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_yes_partial_conflicts_continues(
         self,
@@ -1572,11 +1572,11 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 0
         mock_print_track_info.assert_called_once_with([content2])
 
-    @patch("rekordbox_bulk_edit.commands.convert.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.print_track_info")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_partial_conflicts_no_overwrite_continues(
         self,
@@ -1615,12 +1615,12 @@ class TestConvertCommandErrorPaths:
         mock_logger.warning.assert_called()
         mock_print_track_info.assert_called_once_with([content2])
 
-    @patch("rekordbox_bulk_edit.commands.convert.sys")
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.sys")
+    @patch("rekordbox_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_user_declines_batch_confirmation(
         self,
@@ -1662,12 +1662,12 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 0
         mock_logger.info.assert_any_call("Cancelled.")
 
-    @patch("rekordbox_bulk_edit.commands.convert.sys")
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.sys")
+    @patch("rekordbox_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_userquit_during_batch_confirmation(
         self,
@@ -1708,11 +1708,11 @@ class TestConvertCommandErrorPaths:
 
         assert result.exit_code == 0
 
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_interactive_user_skips_file(
         self,
@@ -1753,11 +1753,11 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 0
         mock_logger.info.assert_any_call("No files were converted.")
 
-    @patch("rekordbox_bulk_edit.commands.convert.confirm")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.confirm")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_interactive_user_quits(
         self,
@@ -1796,10 +1796,10 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 0
         mock_logger.info.assert_any_call("User quit. Rolling back...")
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_source_not_found_exits(
         self,
@@ -1836,11 +1836,11 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 1
         mock_logger.error.assert_any_call("  Source not found: /music/song.flac")
 
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_conversion_fails_exits(
         self,
@@ -1879,11 +1879,11 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 1
         mock_logger.error.assert_any_call("  Conversion failed. Aborting.")
 
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_output_not_created_exits(
         self,
@@ -1924,12 +1924,12 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 1
         mock_logger.error.assert_any_call("  Output file not created. Aborting.")
 
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_db_update_fails_exits(
         self,
@@ -1972,12 +1972,12 @@ class TestConvertCommandErrorPaths:
         assert result.exit_code == 1
         mock_logger.error.assert_any_call("  Database update failed: DB write failed")
 
-    @patch("rekordbox_bulk_edit.commands.convert.update_database_record")
-    @patch("rekordbox_bulk_edit.commands.convert.convert_to_lossless")
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.update_database_record")
+    @patch("rekordbox_edit.commands.convert.convert_to_lossless")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     @patch("os.path.exists")
     def test_convert_command_commit_fails_exits(
         self,
@@ -2025,10 +2025,10 @@ class TestConvertCommandErrorPaths:
 class TestConvertStdinPiping:
     """Test convert command reading track IDs from stdin when piped."""
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_reads_track_ids_from_stdin_when_piped(
         self,
         mock_ffmpeg_in_path,
@@ -2060,10 +2060,10 @@ class TestConvertStdinPiping:
         call_kwargs = mock_get_filtered_content.call_args.kwargs
         assert call_kwargs["track_id_args"] == ["190993005", "108916663", "59476253"]
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_merges_stdin_ids_with_argument_ids(
         self,
         mock_ffmpeg_in_path,
@@ -2109,10 +2109,10 @@ class TestConvertStdinPiping:
         assert result.exit_code != 0
         assert "requires --dry-run or --yes" in result.output
 
-    @patch("rekordbox_bulk_edit.commands.convert.get_rekordbox_pid")
-    @patch("rekordbox_bulk_edit.commands.convert.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.convert.Rekordbox6Database")
-    @patch("rekordbox_bulk_edit.utils.ffmpeg_in_path")
+    @patch("rekordbox_edit.commands.convert.get_rekordbox_pid")
+    @patch("rekordbox_edit.commands.convert.get_filtered_content")
+    @patch("rekordbox_edit.commands.convert.Rekordbox6Database")
+    @patch("rekordbox_edit.utils.ffmpeg_in_path")
     def test_empty_stdin_does_not_affect_track_ids(
         self,
         mock_ffmpeg_in_path,

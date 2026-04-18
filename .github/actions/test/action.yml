@@ -13,7 +13,7 @@ runs:
     - name: Run unit tests
       shell: bash
       run: |
-        uv run pytest tests --cov=rekordbox_bulk_edit --junitxml=.coverage/junit.xml --cov-report=term-missing --cov-report=html --cov-report=xml
+        uv run pytest tests --cov=rekordbox_edit --junitxml=.coverage/junit.xml --cov-report=term-missing --cov-report=html --cov-report=xml
 
     - name: Upload results to Codecov
       uses: codecov/codecov-action@main

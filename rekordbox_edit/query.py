@@ -127,7 +127,7 @@ class CollectionQuery:
 
     def by_format(self, format_name: str) -> "CollectionQuery":
         """Filter by file format."""
-        from rekordbox_bulk_edit.utils import get_file_type_for_format
+        from rekordbox_edit.utils import get_file_type_for_format
 
         if not format_name:
             logger.warning("Empty format filter has no effect")

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Command line interface for rekordbox-bulk-edit."""
+"""Command line interface for rekordbox-edit."""
 
 import logging
 import sys
 
 import click
 
-from rekordbox_bulk_edit.commands.convert import convert_command
-from rekordbox_bulk_edit.commands.search import search_command
-from rekordbox_bulk_edit.logger import get_debug_file_path, setup_logging
+from rekordbox_edit.commands.convert import convert_command
+from rekordbox_edit.commands.search import search_command
+from rekordbox_edit.logger import get_debug_file_path, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ def main():
     except Exception as e:
         logger.critical("Unhandled exception occured:", exc_info=e)
         logger.info(
-            f"Please report this issue to https://github.com/jviall/rekordbox-bulk-edit/issues with the debug file for this run: {get_debug_file_path().absolute().as_uri()}",
+            f"Please report this issue to https://github.com/jviall/rekordbox-edit/issues with the debug file for this run: {get_debug_file_path().absolute().as_uri()}",
         )
         sys.exit(1)
 

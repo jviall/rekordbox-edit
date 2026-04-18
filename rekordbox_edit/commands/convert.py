@@ -1,4 +1,4 @@
-"""Convert command for rekordbox-bulk-edit."""
+"""Convert command for rekordbox-edit."""
 
 import logging
 import os
@@ -13,16 +13,16 @@ from ffmpeg import Error as FfmpegError
 from pyrekordbox import Rekordbox6Database
 from pyrekordbox.utils import get_rekordbox_pid
 
-from rekordbox_bulk_edit._click import (
+from rekordbox_edit._click import (
     PrintChoice,
     add_click_options,
     global_click_filters,
     print_option,
     track_ids_argument,
 )
-from rekordbox_bulk_edit.logger import get_debug_file_path, set_level
-from rekordbox_bulk_edit.query import get_filtered_content
-from rekordbox_bulk_edit.utils import (
+from rekordbox_edit.logger import get_debug_file_path, set_level
+from rekordbox_edit.query import get_filtered_content
+from rekordbox_edit.utils import (
     OutputFormats,
     UserQuit,
     confirm,
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 def convert_to_lossless(input_path, output_path, output_format):
     """Convert lossless file to another lossless format, preserving bit depth."""
-    from rekordbox_bulk_edit.utils import ffmpeg_in_path, get_ffmpeg_directions
+    from rekordbox_edit.utils import ffmpeg_in_path, get_ffmpeg_directions
 
     logger.debug(
         f"convert_to_lossless: {input_path} -> {output_path} (format={output_format.value})"
@@ -98,7 +98,7 @@ def convert_to_lossless(input_path, output_path, output_format):
 
 def convert_to_mp3(input_path, mp3_path):
     """Convert lossless file to MP3 320kbps CBR."""
-    from rekordbox_bulk_edit.utils import ffmpeg_in_path, get_ffmpeg_directions
+    from rekordbox_edit.utils import ffmpeg_in_path, get_ffmpeg_directions
 
     logger.debug(f"convert_to_mp3: {input_path} -> {mp3_path}")
 
@@ -111,13 +111,9 @@ def convert_to_mp3(input_path, mp3_path):
         map_metadata = 0
         write_id3v2 = 1
 
-        output_options = {
-            "acodec": acodec,
-            "audio_bitrate": audio_bitrate,
-            "map_metadata": map_metadata,
-            "write_id3v2": write_id3v2,
-        }
-        logger.debug(f"Invoking ffmpeg with options: {output_options}")
+        logger.debug(
+            f"Invoking ffmpeg with options: {acodec, audio_bitrate, map_metadata, write_id3v2}"
+        )
         (
             ffmpeg.input(input_path)
             .output(
@@ -310,7 +306,7 @@ def convert_command(
 
     Skips lossy formats and files already in the target format.
     """
-    from rekordbox_bulk_edit.utils import ffmpeg_in_path, get_ffmpeg_directions
+    from rekordbox_edit.utils import ffmpeg_in_path, get_ffmpeg_directions
 
     set_level(print_opt)
 

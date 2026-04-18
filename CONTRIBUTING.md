@@ -20,8 +20,8 @@ Thanks for your interest in contributing to this project! Python is not my exper
 2. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/jviall/rekordbox-bulk-edit.git
-   cd rekordbox-bulk-edit
+   git clone https://github.com/jviall/rekordbox-edit.git
+   cd rekordbox-edit
    ```
 
 3. **Install the project and dependencies**:
@@ -50,7 +50,7 @@ Thanks for your interest in contributing to this project! Python is not my exper
 
 6. **Verify installation**:
    ```bash
-   rekordbox-bulk-edit --version
+   rekordbox-edit --version
    ```
 
 ### Tasks (via Make)

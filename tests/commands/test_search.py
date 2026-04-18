@@ -4,21 +4,21 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from rekordbox_bulk_edit.commands.search import search_command
+from rekordbox_edit.commands.search import search_command
 
 
 @pytest.fixture(autouse=True)
 def mock_logger():
-    with patch("rekordbox_bulk_edit.commands.search.logger") as mock_log:
+    with patch("rekordbox_edit.commands.search.logger") as mock_log:
         yield mock_log
 
 
 class TestSearchCommand:
     """Base tests for search command behaviour."""
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_search_calls_print_track_info_by_default(
         self,
         mock_db_class,
@@ -43,9 +43,9 @@ class TestSearchCommand:
         assert result.exit_code == 0
         mock_print_track_info.assert_called_once_with([content])
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_print_ids_outputs_space_separated_ids(
         self,
         mock_db_class,
@@ -73,9 +73,9 @@ class TestSearchCommand:
         assert "AAA111 BBB222" in result.output
         mock_print_track_info.assert_not_called()
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_print_silent_produces_no_output(
         self,
         mock_db_class,
@@ -102,7 +102,7 @@ class TestSearchCommand:
         assert result.output.strip() == ""
         mock_print_track_info.assert_not_called()
 
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_search_no_db_session_raises(self, mock_db_class):
         """RuntimeError is raised (and propagated) when the db has no session."""
         mock_db = Mock()
@@ -115,9 +115,9 @@ class TestSearchCommand:
 
         assert result.exit_code != 0
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_filters_passed_to_get_filtered_content(
         self,
         mock_db_class,
@@ -149,9 +149,9 @@ class TestSearchCommand:
 class TestSearchStdinPiping:
     """Test search command reading track IDs from stdin when piped."""
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_reads_track_ids_from_stdin_when_piped(
         self,
         mock_db_class,
@@ -175,9 +175,9 @@ class TestSearchStdinPiping:
         call_kwargs = mock_get_filtered_content.call_args.kwargs
         assert call_kwargs["track_id_args"] == ["190993005", "108916663", "59476253"]
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_merges_stdin_ids_with_argument_ids(
         self,
         mock_db_class,
@@ -210,9 +210,9 @@ class TestSearchStdinPiping:
             "113475696",
         ]
 
-    @patch("rekordbox_bulk_edit.commands.search.print_track_info")
-    @patch("rekordbox_bulk_edit.commands.search.get_filtered_content")
-    @patch("rekordbox_bulk_edit.commands.search.Rekordbox6Database")
+    @patch("rekordbox_edit.commands.search.print_track_info")
+    @patch("rekordbox_edit.commands.search.get_filtered_content")
+    @patch("rekordbox_edit.commands.search.Rekordbox6Database")
     def test_empty_stdin_does_not_affect_track_ids(
         self,
         mock_db_class,
