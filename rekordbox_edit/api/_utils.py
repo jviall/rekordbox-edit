@@ -111,7 +111,11 @@ def _update_anlz_paths(
             with open(anlz_path, "wb") as fh:
                 fh.write(updated)
         except (AnlzFormatError, OSError) as e:
-            _logger.warning(f"Could not rewrite the path tag in {anlz_path}: {e}")
+            _logger.warning(
+                f"Could not rewrite the path tag in {anlz_path}: {e}. It still "
+                "names the previous file; re-analyze the track in Rekordbox to "
+                "rebuild the analysis."
+            )
             continue
         _logger.debug(f"Updated PPTH of {anlz_path} to {new_ppth}")
 
