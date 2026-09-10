@@ -11,7 +11,12 @@ from pyrekordbox.db6 import tables as tb
 
 from rekordbox_edit._tag_fields import TAG_FIELDS
 from rekordbox_edit.api._relations import RELATIONS, find_by_name, get_or_create
-from rekordbox_edit.api._utils import stamp_usns, track_from_content, writing
+from rekordbox_edit.api._utils import (
+    _sync_audio_columns,
+    stamp_usns,
+    track_from_content,
+    writing,
+)
 from rekordbox_edit.errors import (
     DirectoryConfirmationRequired,
     ImportInputError,
@@ -31,7 +36,7 @@ from rekordbox_edit.query import (
     require_session,
 )
 from rekordbox_edit.tags import TrackTags, UnreadableFile, read_tags
-from rekordbox_edit.utils import FILE_TYPES
+from rekordbox_edit.utils import FILE_TYPES, AudioInfo
 
 _logger = logging.getLogger(__name__)
 
@@ -155,10 +160,8 @@ IMPORT_DEFAULTS: dict[str, object] = {
     "rb_local_data_status": 0,
     "rb_local_deleted": 0,
     "rb_local_synced": 0,
-    # Analysis fills these; an import leaves them zero.
-    "SampleRate": 0,
-    "BitRate": 0,
-    "BitDepth": 0,
+    # Analysis fills these; an import leaves them zero. SampleRate, BitDepth,
+    # and BitRate are absent because _build_content reads them from the file.
     "BPM": 0,
     "Analysed": 0,
 }
@@ -196,6 +199,27 @@ def _scalar_columns(tags: TrackTags) -> dict[str, str | int]:
     }
 
 
+def _stream_audio_info(tags: TrackTags) -> AudioInfo:
+    """A track's stream header in the shape `_sync_audio_columns` reads.
+
+    Only the three audio columns are taken from this. The probe-only fields
+    describe nothing an import row records, so they carry no value.
+
+    rekordbox's own import leaves these columns at zero and lets analysis fill
+    them. Reading them here diverges from that deliberately, so that a row an
+    import creates already describes its file the way a repointed `edit` does.
+    """
+    return {
+        "sample_rate": tags["sample_rate"] or 0,
+        "bit_depth": tags["bit_depth"],
+        "bitrate": tags["bitrate"],
+        "channels": 0,
+        "codec": None,
+        "container": None,
+        "duration": None,
+    }
+
+
 def _created_date(path: str) -> str:
     """The file's creation date, as Rekordbox records DateCreated.
 
@@ -230,7 +254,12 @@ def _build_content(
     # add_content types by extension, mapping every .m4a to AAC, and stamps
     # DateCreated with today rather than the file's own date.
     if tags["file_type"] is not None:
-        content.FileType = tags["file_type"]
+        _sync_audio_columns(
+            content,
+            _stream_audio_info(tags),
+            tags["file_type"],
+            content.FileSize,
+        )
     content.DateCreated = _created_date(candidate.path)
     # add_content stores str(Path(path)), which is backslashed on Windows.
     # Rekordbox forward-slashes FolderPath on every platform.

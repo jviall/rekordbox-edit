@@ -37,6 +37,9 @@ class TrackTags(TypedDict):
     release_year: int | None
     length: int | None
     file_type: int | None
+    sample_rate: int | None
+    bit_depth: int | None
+    bitrate: int | None
 
 
 # Rekordbox FileType by mutagen's file class. MP4 splits on the codec because
@@ -158,6 +161,11 @@ def _file_type(audio) -> int | None:
     return file_type.code if file_type else None
 
 
+def _kbps(bitrate: int | None) -> int | None:
+    """A stream header's bits per second in the whole kilobits rekordbox stores."""
+    return bitrate // 1000 if bitrate else None
+
+
 def read_tags(path: str) -> TrackTags:
     """Read one file's tags and stream header.
 
@@ -184,7 +192,8 @@ def read_tags(path: str) -> TrackTags:
     read = {field: _first(tags, tag_keys) for field, tag_keys in keys.items()}
 
     isrc = _mp4_isrc(tags) if name == "MP4" else read.get("isrc")
-    length = getattr(audio.info, "length", None)
+    info = audio.info
+    length = getattr(info, "length", None)
 
     result: TrackTags = {
         "title": read.get("title") or os.path.splitext(os.path.basename(path))[0],
@@ -201,6 +210,10 @@ def read_tags(path: str) -> TrackTags:
         "release_year": _leading_int(read.get("release_year")),
         "length": int(length) if length is not None else None,
         "file_type": _file_type(audio),
+        "sample_rate": getattr(info, "sample_rate", None),
+        # MP3 and some MP4 headers report no depth; the caller supplies one.
+        "bit_depth": getattr(info, "bits_per_sample", None) or None,
+        "bitrate": _kbps(getattr(info, "bitrate", None)),
     }
     _logger.debug(f"read tags for {path}: file_type={result['file_type']}")
     return result

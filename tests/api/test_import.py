@@ -182,6 +182,9 @@ def tags() -> TrackTags:
         "release_year": 2022,
         "length": 254,
         "file_type": 5,
+        "sample_rate": 44100,
+        "bit_depth": 16,
+        "bitrate": 96,
     }
 
 
@@ -193,9 +196,15 @@ class TestImportDefaults:
         assert IMPORT_DEFAULTS["ExtInfo"] == "null"
 
     def test_leaves_the_analysis_columns_at_zero(self):
-        for column in ("SampleRate", "BitRate", "BitDepth", "BPM", "Analysed"):
+        for column in ("BPM", "Analysed"):
             assert IMPORT_DEFAULTS[column] == 0
         assert IMPORT_DEFAULTS["AnalysisDataPath"] == ""
+
+    def test_omits_the_columns_read_from_the_stream_header(self):
+        # _build_content writes these from the file, so a default here would
+        # be overwritten anyway and reads as though an import left them zero.
+        for column in ("SampleRate", "BitRate", "BitDepth"):
+            assert column not in IMPORT_DEFAULTS
 
     def test_omits_searchstr_so_it_stays_null(self):
         # NULL on all 924 content rows sampled; no observed value to imitate.
@@ -308,6 +317,19 @@ class TestBuildContent:
         assert kwargs["DiscNo"] == tags["disc_no"]
         assert kwargs["ReleaseYear"] == tags["release_year"]
         assert kwargs["Length"] == tags["length"]
+
+    def test_writes_the_audio_columns_from_the_stream_header(
+        self, mock_db, tags, tmp_path, stale_content
+    ):
+        track = tmp_path / "a.flac"
+        track.write_bytes(b"")
+
+        content = _build_content(mock_db, _candidate(str(track), tags))
+
+        assert content.SampleRate == tags["sample_rate"]
+        assert content.BitDepth == tags["bit_depth"]
+        # FLAC bitrate is stored as 0, the same convention edit applies.
+        assert content.BitRate == 0
 
     def test_overrides_file_type_and_date_created_after_add_content(
         self, mock_db, tags, tmp_path, stale_content

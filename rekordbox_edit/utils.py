@@ -237,7 +237,8 @@ Install it with `brew install ffmpeg`, or from https://ffmpeg.org/download.html
 
 
 class AudioInfo(TypedDict):
-    """Fields extracted from an ffmpeg probe of one audio file."""
+    """One audio file's stream characteristics, from an ffmpeg probe or from
+    the header mutagen reads."""
 
     bit_depth: int | None
     sample_rate: int
