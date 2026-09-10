@@ -1,3 +1,29 @@
+## v0.13.1 (2026-09-10)
+
+
+- fix(import): fill the audio columns from the file's stream header
+- fix(edit): tell the user how to repair a stale analysis path
+- fix(rating): use rekordbox's 0-5 scale, not the XML x51 encoding
+- fix(display): keep the new value visible in a change preview
+- The changed column rendered the old and new values into one cell that was
+no-wrap with ellipsis overflow. For FolderPath the old value alone fills
+the column at any ordinary terminal width, so the new value was truncated
+away and --dry-run showed only what the row already held. A bulk repoint
+was unverifiable from it; the new value first appeared around 600 columns.
+- The column now wraps instead of ellipsising when it carries a preview, and
+the new value renders beneath the struck-through old one.
+- The existing test missed this by asserting against a 400-column console
+with a single short column, which is not a width anyone runs.
+- chore(deps): update dependency click to v8.5.0
+- fix(edit): survive a row whose analysis directory is missing
+- A row can carry an AnalysisDataPath naming a directory that was never
+created. get_anlz_paths scans that directory, so it raises rather than
+returning nothing, and the call sat outside the per-file guard.
+- The rewrite runs in post_commit, after the whole edit has been committed,
+so the raise aborted the loop with every FolderPath already written and
+the remaining PPTH tags stale. A re-run could not repair it: the paths
+match by then, no ops are planned, and post_commit never runs again.
+
 ## v0.13.0 (2026-09-08)
 
 
