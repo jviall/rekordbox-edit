@@ -16,8 +16,8 @@ from rekordbox_edit.display import PrintableField
 from rekordbox_edit.tags import TrackTags
 
 #: TrackTags keys read off the audio stream rather than a tag, so they have no
-#: registry row: `import` derives both and neither is editable.
-_STREAM_KEYS = {"length", "file_type"}
+#: registry row: `import` derives them all and none is editable.
+_STREAM_KEYS = {"length", "file_type", "sample_rate", "bit_depth", "bitrate"}
 
 #: Fields `edit` offers that are not audio tags at all.
 _NON_TAG_FIELDS = {"Rating", "FolderPath"}

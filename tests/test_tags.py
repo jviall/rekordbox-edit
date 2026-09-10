@@ -52,6 +52,29 @@ class TestScalarTags:
         assert tags["title"] == "05-aiff-44_1k-16b"
         assert tags["artist"] is None
 
+    @pytest.mark.parametrize(
+        "name,sample_rate,bit_depth,bitrate",
+        [
+            ("01-flac-44_1k-16b.flac", 44100, 16, 96),
+            ("05-aiff-44_1k-16b.aiff", 44100, 16, 705),
+            ("06-wav-96k-24b.wav", 96000, 24, 2304),
+            # MP3 carries no bit depth; the import conventions supply one.
+            ("07-mp3-44_1k-320cbr.mp3", 44100, None, 320),
+            # ALAC reports the PCM-equivalent rate, which is what Rekordbox
+            # stores. An ffmpeg probe reports the compressed rate instead.
+            ("03-alac-44_1k-16b.m4a", 44100, 16, 705),
+            ("09-aac-44_1k-256kbps.m4a", 44100, 16, 132),
+        ],
+    )
+    def test_reads_the_stream_header_numbers(
+        self, name, sample_rate, bit_depth, bitrate
+    ):
+        tags = read_tags(str(FIXTURES / name))
+
+        assert tags["sample_rate"] == sample_rate
+        assert tags["bit_depth"] == bit_depth
+        assert tags["bitrate"] == bitrate
+
     def test_reads_length_as_whole_seconds(self):
         assert read_tags(str(FIXTURES / "01-flac-44_1k-16b.flac"))["length"] == 2
 

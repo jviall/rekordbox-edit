@@ -55,10 +55,10 @@ EXPECTED_EMPTY = {
     "rb_local_synced": 0,
 }
 
-# Analysis fills SampleRate, BitDepth, BPM, and Analysed; an import leaves
-# them at zero. BitRate is not analysis-filled: rekordbox stores it as 0 for
-# variable-rate audio, and it stays 0 through analysis on this FLAC fixture.
-EXPECTED_ZERO = ("SampleRate", "BitRate", "BitDepth", "BPM", "Analysed")
+# Analysis fills BPM and Analysed, so an import leaves them at zero.
+# SampleRate, BitDepth, and BitRate are read from the file instead: rekordbox
+# waits for analysis to fill them, and this tool deliberately does not.
+EXPECTED_ZERO = ("BPM", "Analysed")
 
 
 @pytest.fixture
@@ -97,6 +97,12 @@ def test_imported_row_matches_the_rekordbox_import_shape(
     assert row.AlbumName == "Lossless Vol 1"
     assert row.Length == 2
     assert row.FileSize == track.stat().st_size
+
+    # Read from the stream header at import, following the same conventions
+    # `edit` applies. FLAC bitrate is stored as 0 for variable-rate audio.
+    assert row.SampleRate == 44100
+    assert row.BitDepth == 16
+    assert row.BitRate == 0
 
     for column, expected in EXPECTED_EMPTY.items():
         assert getattr(row, column) == expected, f"{column} diverges from Rekordbox"
