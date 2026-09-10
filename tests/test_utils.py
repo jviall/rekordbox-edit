@@ -14,8 +14,6 @@ from rekordbox_edit.utils import (
     parse_star_rating,
     get_file_type_for_probe,
     probe_matches_file_type,
-    star_rating_to_stored,
-    stored_to_star_rating,
 )
 
 
@@ -492,12 +490,6 @@ class TestGetFileTypeForProbe:
     )
     def test_mapping(self, codec, container, expected):
         assert get_file_type_for_probe(codec, container) == expected
-
-
-@pytest.mark.parametrize("stars,stored", [(0, 0), (1, 51), (3, 153), (5, 255)])
-def test_star_stored_roundtrip(stars, stored):
-    assert star_rating_to_stored(stars) == stored
-    assert stored_to_star_rating(stored) == stars
 
 
 @pytest.mark.parametrize("value,expected", [("0", 0), ("5", 5), (3, 3)])

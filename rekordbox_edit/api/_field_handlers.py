@@ -27,8 +27,6 @@ from rekordbox_edit.utils import (
     get_audio_info,
     get_file_type_for_probe,
     parse_star_rating,
-    star_rating_to_stored,
-    stored_to_star_rating,
 )
 
 _logger = logging.getLogger(__name__)
@@ -127,7 +125,8 @@ class StringField(FieldHandler):
 
 
 class RatingField(FieldHandler):
-    """A 0-5 star rating, stored as stars * 51. `--match` does not apply."""
+    """A 0-5 star rating, stored as the star count itself. `--match` does not
+    apply."""
 
     name = "Rating"
     supports_match = False
@@ -141,13 +140,13 @@ class RatingField(FieldHandler):
 
     def current_value(self, content):
         stored = content.Rating
-        return None if stored is None else str(stored_to_star_rating(stored))
+        return None if stored is None else str(stored)
 
     def compute_new_value(self, current, args):
         return str(parse_star_rating(args.replace_value))
 
     def apply(self, db, content, new_value):
-        content.Rating = star_rating_to_stored(int(new_value))
+        content.Rating = int(new_value)
         return NO_INCIDENTAL_ROWS
 
 

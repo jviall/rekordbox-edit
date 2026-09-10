@@ -110,14 +110,14 @@ def test_album_create_new_has_no_album_artist(fresh_db):
     db.close()
 
 
-def test_rating_written_as_stored_value(fresh_db):
+def test_rating_written_as_the_star_count(fresh_db):
     db = Rekordbox6Database(str(fresh_db))
     assert db.session is not None
     edit(
         db, EditRequest(exact_title=["Apple Alpha"], field="Rating", replace_value="4")
     )
     moved = db.session.query(tb.DjmdContent).filter_by(Title="Apple Alpha").one()
-    assert moved.Rating == 204
+    assert moved.Rating == 4
     db.close()
 
 

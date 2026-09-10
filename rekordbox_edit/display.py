@@ -22,7 +22,7 @@ from rich.table import Table
 from rich.theme import Theme
 
 from rekordbox_edit.models import Track
-from rekordbox_edit.utils import FILE_TYPES, get_file_type_name, stored_to_star_rating
+from rekordbox_edit.utils import FILE_TYPES, get_file_type_name
 
 _logger = logging.getLogger(__name__)
 
@@ -189,7 +189,7 @@ def _cell_value(track: Track, column: PrintableField) -> str:
     if column is PrintableField.FolderPath:
         return os.path.dirname(track.FolderPath or "")
     if column is PrintableField.Rating:
-        return "" if track.Rating is None else str(stored_to_star_rating(track.Rating))
+        return "" if track.Rating is None else str(track.Rating)
     value = getattr(track, column.value, None)
     return "" if value is None else str(value)
 
