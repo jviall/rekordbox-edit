@@ -331,8 +331,10 @@ def get_audio_info(file_path) -> AudioInfo:
         raise e
 
 
+#: DjmdContent.Rating holds the star count itself, 0-5. rekordbox's XML export
+#: encodes the same rating as 0/51/102/153/204/255, which is a property of that
+#: file format and not of this column.
 _RATING_STARS_MAX = 5
-_RATING_STEP = 51  # Rekordbox stores N stars as N * 51.
 
 
 def parse_star_rating(value: "str | int") -> int:
@@ -348,13 +350,3 @@ def parse_star_rating(value: "str | int") -> int:
             f"Rating must be between 0 and {_RATING_STARS_MAX}, got {stars}"
         )
     return stars
-
-
-def star_rating_to_stored(stars: int) -> int:
-    """Convert a 0-5 star rating to the value Rekordbox stores."""
-    return stars * _RATING_STEP
-
-
-def stored_to_star_rating(stored: int) -> int:
-    """Convert a stored rating back to a 0-5 star count."""
-    return round(stored / _RATING_STEP)

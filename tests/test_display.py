@@ -295,7 +295,7 @@ def test_comment_column_renders(capsys, wide_console, make_track):
 
 def test_rating_renders_as_stars(capsys, wide_console, make_track):
     track = make_track(ID="1")
-    track.Rating = 204
+    track.Rating = 4
     print_track_info([track], print_columns=[PrintableField.Rating])
     rendered = capsys.readouterr().out
     assert "4" in rendered

@@ -107,10 +107,12 @@ class TestRatingField:
 
     def test_current_value_is_star_string(self, make_djmd_content_item):
         content = make_djmd_content_item(ID="1")
-        content.Rating = 153
+        content.Rating = 3
         assert FIELD_HANDLERS["Rating"].current_value(content) == "3"
 
-    def test_compute_and_apply_star_to_stored(self, make_djmd_content_item):
+    def test_apply_writes_the_star_count_itself(self, make_djmd_content_item):
+        # DjmdContent.Rating holds 0-5. The 0/51/102/153/204/255 encoding
+        # belongs to rekordbox's XML export, not to this column.
         content = make_djmd_content_item(ID="1")
         content.Rating = 0
         handler = FIELD_HANDLERS["Rating"]
@@ -118,7 +120,7 @@ class TestRatingField:
         new_value = handler.compute_new_value(handler.current_value(content), args)
         assert new_value == "4"
         handler.apply(db=MagicMock(), content=content, new_value=new_value)
-        assert content.Rating == 204
+        assert content.Rating == 4
 
 
 #: Every relational field, as (edit field, foreign key column, relation kind).
