@@ -33,7 +33,7 @@ dev = [
     "pytest-watcher>=0.6.3,<1",
     "callee>=0.3.1,<1",
     "ty>=0.0.1,<1",
-    "syrupy>=5,<6",
+    "syrupy>=6,<7",
 ]
 docs = [
     "mkdocs-material>=9.5,<10",
