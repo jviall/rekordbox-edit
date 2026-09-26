@@ -19,7 +19,7 @@ dependencies = [
     "rich>=15.0.0,<15.1.0",
     "pydantic>=2.0,<3",
     "mutagen>=1.48.1",
-    "filelock>=3.13,<4",
+    "filelock>=4,<5",
 ]
 
 [dependency-groups]
