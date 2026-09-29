@@ -1,3 +1,54 @@
+## v0.13.2 (2026-09-29)
+
+
+- fix(import): don't resolve mapped/symlinked drives to their UNC paths
+- chore(deps): update dependency ruff to v0.16.9 (#251)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update pre-commit hook astral-sh/ruff-pre-commit to v0.16.9 (#252)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ty to v0.0.84 (#250)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency commitizen to v4.19.0 (#248)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ty to v0.0.83 (#246)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update pre-commit hook commitizen-tools/commitizen to v4.19.0 (#249)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update astral-sh/setup-uv action to v10.2.0 (#247)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency platformdirs to v4.11.12 (#245)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ty to v0.0.82 (#244)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ruff to v0.16.8 (#243)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ty to v0.0.81 (#237)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency filelock to v3.32.7 (#236)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency platformdirs to v4.11.9 (#240)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update pre-commit hook astral-sh/ruff-pre-commit to v0.16.8 (#241)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update astral-sh/setup-uv action to v10.1.0 (#239)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update pre-commit hook commitizen-tools/commitizen to v4.18.1 (#238)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency commitizen to v4.18.1 (#235)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ruff to v0.16.7 (#233)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update pre-commit hook astral-sh/ruff-pre-commit to v0.16.7 (#234)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ty to v0.0.80 (#232)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency ty to v0.0.79 (#230)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency platformdirs to v4.11.8 (#229)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency filelock to v3.32.6 (#228)
+- Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
 ## v0.13.1 (2026-09-10)
 
 
