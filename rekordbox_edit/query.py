@@ -1,6 +1,6 @@
 import logging
 import os
-from pathlib import Path
+from pathlib import Path, PurePath, PureWindowsPath
 from collections.abc import Collection
 from typing import List, Literal, Tuple, Union
 
@@ -342,8 +342,39 @@ def get_filtered_content(
 def normalize_path(path: str) -> str:
     """A path in the form Rekordbox stores: absolute, symlinks resolved,
     forward-slashed. Rekordbox records the resolved form, so /tmp becomes
-    /private/tmp on macOS."""
-    return Path(path).resolve().as_posix()
+    /private/tmp on macOS. A Windows drive letter survives resolution, since
+    Rekordbox cannot open the UNC share behind a mapped network drive.
+    """
+    resolved = Path(path).resolve()
+    # splitdrive over abspath, not over `resolved`: abspath makes a relative
+    # path absolute without following the mapping, so the drive letter the
+    # caller meant is still there to compare against. It is always "" off
+    # Windows, which short-circuits everything below.
+    drive = os.path.splitdrive(os.path.abspath(path))[0]
+    if not drive or drive == resolved.drive or drive.startswith("\\\\"):
+        return resolved.as_posix()
+    try:
+        target = Path(drive + os.sep).resolve()
+    except OSError as e:
+        _logger.debug(f"could not resolve what drive {drive} points at: {e}")
+        return resolved.as_posix()
+    return _restore_drive_letter(resolved, drive, target)
+
+
+def _restore_drive_letter(resolved: PurePath, drive: str, target: PurePath) -> str:
+    """`resolved` moved back onto `drive`, which is mapped to `target`.
+
+    Path.resolve() follows a mapped network drive (M: -> //host/share) and a
+    subst drive the way it follows a symlink. Rekordbox stores and plays the
+    drive-letter form and cannot open the UNC share, so only the mapping is
+    undone; a symlink resolved deeper in the path stays resolved.
+    """
+    try:
+        tail = resolved.relative_to(target)
+    except ValueError:
+        _logger.debug(f"{resolved} does not sit under {target}, the target of {drive}")
+        return resolved.as_posix()
+    return PureWindowsPath(drive + "\\", tail).as_posix()
 
 
 def find_content_by_key(

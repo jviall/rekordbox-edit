@@ -3,7 +3,9 @@
 
 import os
 import platform
-from pathlib import Path
+import subprocess
+from contextlib import contextmanager
+from pathlib import Path, PureWindowsPath
 from unittest.mock import MagicMock
 
 import pytest
@@ -17,11 +19,30 @@ from rekordbox_edit.query import (
     find_playlists_by_name,
     get_filtered_content,
     normalize_path,
+    _restore_drive_letter,
 )
 
 
 def _compile(condition: ColumnElement[bool]) -> str:
     return str(condition.compile(compile_kwargs={"literal_binds": True}))
+
+
+@contextmanager
+def _subst_drive(target: Path):
+    """Map the first free drive letter to `target` for the duration of the
+    block. subst is a per-session mapping: it creates no files and leaves
+    nothing behind once detached."""
+    drive = next(
+        (f"{letter}:" for letter in "ZYXWV" if not os.path.exists(f"{letter}:/")),
+        None,
+    )
+    if drive is None:
+        pytest.skip("no free drive letter to map")
+    subprocess.run(["subst", drive, str(target)], check=True)
+    try:
+        yield drive
+    finally:
+        subprocess.run(["subst", drive, "/D"], check=True)
 
 
 class TestCollectionQuery:
@@ -884,6 +905,42 @@ class TestNormalizePath:
 
     def test_makes_relative_paths_absolute(self):
         assert os.path.isabs(normalize_path("song.flac"))
+
+    @pytest.mark.skipif(
+        platform.system() != "Windows", reason="drive letters are Windows-only"
+    )
+    def test_keeps_the_drive_letter_a_subst_drive_resolves_away(self, tmp_path):
+        """A mapped drive is what this guards in the field; subst stands in for
+        one, since Path.resolve() expands both the same way."""
+        track = tmp_path / "song.flac"
+        track.write_bytes(b"")
+        with _subst_drive(tmp_path) as drive:
+            assert normalize_path(f"{drive}/song.flac") == f"{drive}/song.flac"
+
+
+class TestRestoreDriveLetter:
+    """The drive-letter half of normalize_path, fed the paths Windows would
+    produce so the assertions run on every platform."""
+
+    UNC = PureWindowsPath("//192.168.68.10/music")
+
+    def test_rewrites_a_unc_share_back_onto_the_drive(self):
+        resolved = self.UNC / "DJ Music/song.flac"
+        assert (
+            _restore_drive_letter(resolved, "M:", self.UNC) == "M:/DJ Music/song.flac"
+        )
+
+    def test_rewrites_the_share_root_itself(self):
+        assert _restore_drive_letter(self.UNC, "M:", self.UNC) == "M:/"
+
+    def test_keeps_a_path_outside_the_drive_target(self):
+        """A symlink deeper in the path can land outside the share; the
+        resolved form is then the only one that points at the file."""
+        resolved = PureWindowsPath("//other-host/backup/song.flac")
+        assert (
+            _restore_drive_letter(resolved, "M:", self.UNC)
+            == "//other-host/backup/song.flac"
+        )
 
 
 class TestFindContentByKey:

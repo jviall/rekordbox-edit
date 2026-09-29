@@ -52,6 +52,8 @@ rbe edit --title "Teh" Title --match "Teh" --replace "The"
 - When the new file's size differs from the recorded `FileSize`, the file is probed and all of `FileType`, `SampleRate`, `BitDepth`, `BitRate`, `FileSize`, and `Length` are rewritten to match it.
 - When the file name changes, the `PPTH` path tag inside the track's analysis (ANLZ) files is rewritten to match. All other analysis data is left alone.
 
+A `--replace` path is resolved just like [`import`](import.md) does. It resolves to an absolute path, follows any symlinks, and normalizes to forward-slashes.
+
 By default edits will be skipped in the following cases:
 
 - The new path's file does not exist.

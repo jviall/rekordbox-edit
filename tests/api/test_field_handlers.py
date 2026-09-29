@@ -1,3 +1,5 @@
+import os
+import platform
 from typing import get_args
 from unittest.mock import MagicMock, patch
 
@@ -13,6 +15,7 @@ from rekordbox_edit.api._field_handlers import (
 from rekordbox_edit.api._relations import RELATIONS, find_by_name, get_or_create
 from rekordbox_edit.errors import DependencyMissingError
 from rekordbox_edit.models import EditRequest, SkipReason
+from rekordbox_edit.query import normalize_path
 
 
 def _artist_handler():
@@ -403,6 +406,9 @@ class TestFolderPathField:
         content = make_djmd_content_item(ID="1", FolderPath="/old/song.wav")
         assert _folder_handler().current_value(content) == "/old/song.wav"
 
+    @pytest.mark.skipif(
+        platform.system() != "Windows", reason="a backslash path is a Windows path"
+    )
     def test_compute_normalizes_backslashes(self):
         args = EditRequest(
             title=["x"], field="FolderPath", replace_value=r"C:\Music\song.wav"
@@ -410,6 +416,30 @@ class TestFolderPathField:
         assert (
             _folder_handler().compute_new_value("/old/song.wav", args)
             == "C:/Music/song.wav"
+        )
+
+    def test_compute_makes_a_wholesale_replacement_absolute(self):
+        """Rekordbox resolves a stored path against nothing, so a relative one
+        never finds its file."""
+        args = EditRequest(
+            title=["x"], field="FolderPath", replace_value="music/song.wav"
+        )
+        new_value = _folder_handler().compute_new_value("/old/song.wav", args)
+        assert new_value == normalize_path("music/song.wav")
+        assert os.path.isabs(new_value)
+
+    def test_compute_match_leaves_the_replacement_unresolved(self):
+        """--match retargets stored paths in bulk, often onto a drive this
+        machine has not mounted, so the substitution stands as written."""
+        args = EditRequest(
+            title=["x"],
+            field="FolderPath",
+            match_pattern="/old/music",
+            replace_value="relative/dir",
+        )
+        assert (
+            _folder_handler().compute_new_value("/old/music/song.wav", args)
+            == "relative/dir/song.wav"
         )
 
     def test_compute_match_skips_none(self):
