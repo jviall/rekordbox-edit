@@ -22,6 +22,7 @@ from rekordbox_edit.api._relations import (
 from rekordbox_edit.api._utils import _sync_audio_columns, _update_anlz_paths
 from rekordbox_edit.errors import DependencyMissingError
 from rekordbox_edit.models import EditRequest, SkipReason
+from rekordbox_edit.query import normalize_path
 from rekordbox_edit.utils import (
     AudioInfo,
     get_audio_info,
@@ -265,7 +266,12 @@ class FolderPathField(FieldHandler):
         new_value = _replace(current, args)
         if new_value is None:
             return None
-        return new_value.replace("\\", "/")
+        if args.match_pattern is not None:
+            # --match rewrites stored paths in bulk, routinely onto a drive
+            # this machine has not mounted. Resolving those against the local
+            # filesystem would rewrite the very prefix the caller just set.
+            return new_value.replace("\\", "/")
+        return normalize_path(new_value)
 
     def validate_track(self, db, content, new_value, args):
         if not os.path.exists(new_value):
