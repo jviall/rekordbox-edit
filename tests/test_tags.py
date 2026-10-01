@@ -7,7 +7,7 @@ from mutagen.id3 import COMM, TCOM, TCON, TDRC, TKEY, TPOS, TPUB, TRCK, TSRC
 from mutagen.mp3 import MP3
 from mutagen.mp4 import MP4, MP4FreeForm
 
-from rekordbox_edit.tags import UnreadableFile, _first, read_tags
+from rekordbox_edit.tags import UnreadableFile, _first, _genre, read_tags
 
 FIXTURES = Path(__file__).resolve().parent / "e2e/fixtures/audio"
 
@@ -163,6 +163,16 @@ class TestVorbisTags:
         assert tags["track_no"] == 3
         assert tags["disc_no"] == 1
 
+    def test_joins_repeated_genre_comments(self, tmp_path):
+        """Vorbis stores a second genre as a second `genre` comment; all of
+        them reach the single genre a track stores."""
+        path = _copy(tmp_path, "01-flac-44_1k-16b.flac")
+        audio = FLAC(path)
+        audio["genre"] = ["Techno", "Electro", "  "]
+        audio.save()
+
+        assert read_tags(path)["genre"] == "Techno; Electro"
+
 
 class TestID3Tags:
     """genre through disc_no plus comment: none of these appear on the
@@ -211,9 +221,19 @@ class TestID3Tags:
         assert read_tags(path)["comment"] == "legacy note"
 
     def test_takes_the_first_value_of_a_multi_value_text_frame(self, tmp_path):
-        """A text frame may legally carry multiple values (e.g. two genres
-        in one TCON). Stringifying the whole frame joins them with a NUL
-        byte; read_tags must take only the first value instead."""
+        """A text frame may legally carry multiple values. Stringifying the
+        whole frame joins them with a NUL byte; read_tags must take only the
+        first value instead, except for genre, which keeps all of them."""
+        path = _copy(tmp_path, "07-mp3-44_1k-320cbr.mp3")
+
+        audio = MP3(path)
+        assert audio.tags is not None
+        audio.tags.add(TCOM(encoding=3, text=["First Composer", "Second Composer"]))
+        audio.save()
+
+        assert read_tags(path)["composer"] == "First Composer"
+
+    def test_joins_the_genres_of_a_multi_value_tcon_frame(self, tmp_path):
         path = _copy(tmp_path, "07-mp3-44_1k-320cbr.mp3")
 
         audio = MP3(path)
@@ -221,7 +241,7 @@ class TestID3Tags:
         audio.tags.add(TCON(encoding=3, text=["Trance", "Progressive House"]))
         audio.save()
 
-        assert read_tags(path)["genre"] == "Trance"
+        assert read_tags(path)["genre"] == "Trance; Progressive House"
 
 
 class TestFirst:
@@ -252,3 +272,11 @@ class TestFirst:
 
     def test_returns_none_when_every_key_is_empty(self):
         assert _first({"label": [""]}, ("label", "organization")) is None
+
+
+class TestGenre:
+    def test_joins_every_value_of_the_first_populated_key(self):
+        assert _genre({"\xa9gen": ["House", "Disco"]}, ("\xa9gen",)) == "House; Disco"
+
+    def test_returns_none_when_no_key_holds_a_genre(self):
+        assert _genre({}, ("genre",)) is None
