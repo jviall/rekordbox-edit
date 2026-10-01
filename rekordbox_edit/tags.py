@@ -42,6 +42,9 @@ class TrackTags(TypedDict):
     bitrate: int | None
 
 
+#: Joins the genres of a multi-genre file into the single name a track stores.
+GENRE_SEPARATOR = "; "
+
 # Rekordbox FileType by mutagen's file class. MP4 splits on the codec because
 # .m4a holds either ALAC or AAC and the extension cannot tell them apart.
 _MP4_ALAC, _MP4_AAC = 6, 4
@@ -91,8 +94,17 @@ _MP4_KEYS: dict[str, tuple[str, ...]] = {
 }
 
 
-def _first(tags, keys) -> str | None:
-    """The first non-empty value among `keys`, as a string.
+def _text(value) -> str:
+    """One raw mutagen value as stripped text."""
+    if isinstance(value, tuple):  # MP4 trkn/disk are (number, total)
+        value = value[0]
+    if isinstance(value, (bytes, bytearray)):
+        value = bytes(value).decode("utf-8", "replace")
+    return str(value).strip()
+
+
+def _values(tags, keys) -> list[str]:
+    """Every non-empty value under the first of `keys` the file carries.
 
     A literal "COMM" key is a fallback marker: mutagen keys ID3 comment
     frames as "COMM:<description>:<language>", and the description varies
@@ -109,20 +121,31 @@ def _first(tags, keys) -> str | None:
                 raw = tags[key]
             except (KeyError, TypeError):
                 continue
-        if isinstance(raw, list) and raw:
-            value = raw[0]
-        elif hasattr(raw, "text"):  # ID3 frame; .text holds its value(s)
-            value = raw.text[0] if raw.text else ""
+        if hasattr(raw, "text"):  # ID3 frame; .text holds its value(s)
+            items = list(raw.text)
+        elif isinstance(raw, list):
+            items = raw
         else:
-            value = raw
-        if isinstance(value, tuple):  # MP4 trkn/disk are (number, total)
-            value = value[0]
-        if isinstance(value, (bytes, bytearray)):
-            value = bytes(value).decode("utf-8", "replace")
-        text = str(value).strip()
-        if text:
-            return text
-    return None
+            items = [raw]
+        values = [text for text in (_text(item) for item in items) if text]
+        if values:
+            return values
+    return []
+
+
+def _first(tags, keys) -> str | None:
+    """The first non-empty value among `keys`, as a string."""
+    values = _values(tags, keys)
+    return values[0] if values else None
+
+
+def _genre(tags, keys) -> str | None:
+    """Every genre the file lists, joined by GENRE_SEPARATOR.
+
+    A track holds one GenreID, so multiple genres collapse into one name
+    that Rekordbox shows, sorts, and searches as written.
+    """
+    return GENRE_SEPARATOR.join(_values(tags, keys)) or None
 
 
 def _leading_int(value: str | None) -> int | None:
@@ -199,7 +222,7 @@ def read_tags(path: str) -> TrackTags:
         "title": read.get("title") or os.path.splitext(os.path.basename(path))[0],
         "artist": read.get("artist"),
         "album": read.get("album"),
-        "genre": read.get("genre"),
+        "genre": _genre(tags, keys["genre"]),
         "composer": read.get("composer"),
         "label": read.get("label"),
         "isrc": isrc,
