@@ -1,3 +1,8 @@
+## v0.13.3 (2026-10-01)
+
+
+- fix(import): read and concatenate all tagged genres
+
 ## v0.13.2 (2026-09-29)
 
 
