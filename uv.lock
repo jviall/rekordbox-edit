@@ -1128,7 +1128,7 @@ wheels = [
 
 [[package]]
 name = "pyrekordbox"
-version = "0.4.4"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bidict" },
@@ -1140,9 +1140,9 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "sqlcipher3-wheels" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/39/8b/8fb7f21f4eb676df35c53214129ad33624634e2b678069abbf6a88509c6b/pyrekordbox-0.4.4.tar.gz", hash = "sha256:8bdb59f7c45c743bd2021613a72604b7607092d386e25f20cce78adfe30bf9a4", size = 2310256, upload-time = "2025-08-17T20:09:18.773Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f0/fb/d4c136615b9eab3854ec446c93467660fbb9086f24dafa3becf0a0914404/pyrekordbox-0.5.0.tar.gz", hash = "sha256:4a5181ab2d9f0c73169ba8c04ba854b8e786251de58a6d35a610d4d04c7e5885", size = 2449133, upload-time = "2026-10-14T14:14:35.098Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b1/a8/28d28f02683bee40e3cfa32caed7c46e47daffb51482798fea9af0ab23cb/pyrekordbox-0.4.4-py3-none-any.whl", hash = "sha256:2de933870126b9a0ef04bea372f1c5934efcfbb2501efb6b47d8ace0e17fb3d8", size = 76000, upload-time = "2025-08-17T20:09:16.985Z" },
+    { url = "https://files.pythonhosted.org/packages/07/fe/a00d1f669f32b88f6f48b2f4350fe94d31486215333b5a35a4406d7bd961/pyrekordbox-0.5.0-py3-none-any.whl", hash = "sha256:b588e95a839994bef5b992ed34887dbf79233e71ebbb61c93ebb00466af423e5", size = 92570, upload-time = "2026-10-14T14:14:33.688Z" },
 ]
 
 [[package]]
@@ -1347,7 +1347,7 @@ requires-dist = [
     { name = "mutagen", specifier = ">=1.48.1" },
     { name = "platformdirs", specifier = ">=4.3.8,<5.0.0" },
     { name = "pydantic", specifier = ">=2.0,<3" },
-    { name = "pyrekordbox", specifier = "==0.4.4" },
+    { name = "pyrekordbox", specifier = "==0.5.0" },
     { name = "rich", specifier = ">=15.0.0,<15.1.0" },
 ]
 
